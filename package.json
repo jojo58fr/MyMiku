@@ -1,0 +1,36 @@
+{
+  "dependencies": {
+    "@discordjs/builders": "^0.6.0",
+    "@discordjs/rest": "^0.1.0-canary.0",
+    "axios": "^0.22.0",
+    "discord-api-types": "^0.23.1",
+    "discord.js": "^13.2.0",
+    "dotenv": "^10.0.0",
+    "humanize-duration": "^3.27.0",
+    "log4js": "^6.3.0",
+    "moment": "^2.29.1",
+    "mongoose": "^6.0.10"
+  },
+  "name": "mymiku",
+  "description": "A Discord bot that help streamers to create a community with usefuls commandsnpm",
+  "version": "0.0.1",
+  "main": "index.js",
+  "devDependencies": {
+    "@types/node": "^16.10.3",
+    "eslint": "^7.32.0"
+  },
+  "scripts": {
+    "test": "run",
+    "run": "node index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jojo58fr/MyMiku.git"
+  },
+  "author": "Joachim Miens",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jojo58fr/MyMiku/issues"
+  },
+  "homepage": "https://github.com/jojo58fr/MyMiku#readme"
+}

@@ -1,3 +1,9 @@
+#MyMiku Configs
+.env
+config.json
+config-twitch.json
+
+
 # Logs
 logs
 *.log
@@ -102,3 +108,8 @@ dist
 
 # TernJS port file
 .tern-port
+
+# Discordjs ignore
+node_modules
+.env
+config.json
