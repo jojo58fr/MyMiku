@@ -1,5 +1,6 @@
-const BaseModule = require('../../utils/structures/BaseModule');
 const { Collection } = require('discord.js');
+
+const BaseModule = require('../../utils/structures/BaseModule');
 const { TwitchApi } = require("../../client/TwitchApi");
 
 module.exports = class TwitchModule extends BaseModule {
@@ -13,8 +14,11 @@ module.exports = class TwitchModule extends BaseModule {
 
 		this.activeNotificationRoles = true;
 
-		let twitchApi = new TwitchApi();
+		let twitchApi = new TwitchApi(this);
 
+		this.embedNotificationLive = null;
+
+		this.client = null;
 	}
 
 	Update() {
@@ -24,6 +28,8 @@ module.exports = class TwitchModule extends BaseModule {
 
     async OnReady(client, interaction) {
 		await super.OnReady(client, interaction);
+
+		this.client = client;
 
 		this.CreateNotificationRole("847873984950173766", client);
 
@@ -52,6 +58,50 @@ module.exports = class TwitchModule extends BaseModule {
 		}
 	}
 
-	
+	/* Modules functions */
+
+	async beginNotificationLive(onLiveEmbed)
+    {
+        console.log("User just started his live");
+
+        let msgEmbed = onLiveEmbed.createEmbed();
+
+        var embedMessage = null;
+
+        const channel = await this.client.channels.fetch("848186561081376778");
+        
+        channel.send( { content: "Hey ! Mon live vient de débuter @everyone", embeds: [msgEmbed] }).then((msg) => { this.embedNotificationLive = msg; });
+
+        //console.log( this.embedNotificationLive );
+
+    }
+ 
+    async updateNotificationLive(onLiveEmbed)
+    {
+        if(this.embedNotificationLive != null)
+        {
+
+            let msgEmbed = onLiveEmbed.createEmbed();
+
+            this.embedNotificationLive.edit({ content: "Hey ! Un live est en cours @everyone", embeds: [msgEmbed] });
+        }
+
+        console.log("User just updated his live");
+    }
+
+    async endNotificationLive(onLiveEmbed)
+    {
+        console.log("User just ended his live");
+        
+        if(this.embedNotificationLive != null)
+        {
+
+            let msgEmbed = onLiveEmbed.createEmbed(true);
+
+            this.embedNotificationLive.edit({ content: "Mon live est terminé. Merci à tous ! @everyone", embeds: [msgEmbed] });
+        }
+
+    }
+
 
 }

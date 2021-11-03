@@ -34,7 +34,7 @@ module.exports = class OnLiveEmbed {
 
             if(endedLive)
             {
-                msgEmbed.setColor("#7289da");
+                this.createdEmbed.setColor("#7289da");
                 this.createdEmbed.setAuthor(`${this.user_name} is now ended !`, this.logo, twitchUrl);
                 return this.createdEmbed;
             }

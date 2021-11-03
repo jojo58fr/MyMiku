@@ -27,8 +27,6 @@ class MyMikuClient {
 
         this.InitRegistry(this);
 
-        this.embedNotificationLive = null;
-
         this.modules = [];
 
     }
@@ -36,7 +34,7 @@ class MyMikuClient {
     async InitRegistry()
     {
         this.modules = await registerModuleHandler(path.join(__dirname, '/../module'));
-        
+
         await registerCommandsHandler(this.client, path.join(__dirname, '/../module'));
         await registerEventsHandler(this.client, path.join(__dirname, '/../events'));
     }
@@ -49,6 +47,33 @@ class MyMikuClient {
     getClient()
     {
         return this.client;
+    }
+
+    getModuleByName(name)
+    {
+        for (const module of this.modules) {
+        
+            if(module.name == name)
+            {
+                return module;
+            }
+            //TODO ENUMERER SUR LES MODULES POUR AVOIR LE MODULE AU BON NOM
+        
+        }
+    }
+
+
+    getModuleByClassName(className)
+    {
+        for (const module of this.modules) {
+        
+            if(module instanceof className)
+            {
+                return module;
+            }
+            //TODO ENUMERER SUR LES MODULES POUR AVOIR LE MODULE AU BON NOM
+        
+        }
     }
 
     getClientCommands()
@@ -121,48 +146,7 @@ class MyMikuClient {
         */
     }
 
-    async beginNotificationLive(onLiveEmbed)
-    {
-        console.log("User just started his live");
 
-        let msgEmbed = onLiveEmbed.createEmbed();
-
-        var embedMessage = null;
-
-        const channel = await this.client.channels.fetch("848176046321827890");
-        
-        channel.send( { content: "Hey ! Mon live vient de débuter", embeds: [msgEmbed] }).then((msg) => { this.embedNotificationLive = msg; });
-
-        //console.log( this.embedNotificationLive );
-
-    }
- 
-    async updateNotificationLive(onLiveEmbed)
-    {
-        if(this.embedNotificationLive != null)
-        {
-
-            let msgEmbed = onLiveEmbed.createEmbed();
-
-            this.embedNotificationLive.edit({ content: "Hey ! Un live est en cours", embeds: [msgEmbed] });
-        }
-
-        console.log("User just updated his live");
-    }
-
-    async endNotificationLive(onLiveEmbed)
-    {
-        console.log("User just ended his live");
-        
-        if(this.embedNotificationLive != null)
-        {
-
-            let msgEmbed = onLiveEmbed.createEmbed(true);
-
-            this.embedNotificationLive.edit({ content: "Mon live est terminé. Merci à tous !", embeds: [msgEmbed] });
-        }
-
-    }
 }
 
 var instance = new MyMikuClient(); // Executes succesfully

@@ -2,6 +2,7 @@ const axios = require('axios').default;
 const { clientID, secretID } = require('../config-twitch.json');
 
 const OnLiveEmbed = require('./embeds/OnLiveEmbed');
+const TwitchModule = require('../module/stream/TwitchModule');
 
 class Streamer {
     
@@ -35,7 +36,7 @@ class Streamer {
 
 class TwitchApi {
 
-    constructor() {
+    constructor(twitchModule) {
 
         //console.log("HEY");
         setInterval(() => { this.update(this) }, 10000);
@@ -53,6 +54,8 @@ class TwitchApi {
 
         this.onLiveEmbed = new OnLiveEmbed();
 
+        var myMikuClient = require('../client/MyMikuClient').instance;
+        this.twitchModule = twitchModule;
     }
 
     update(that) {
@@ -65,6 +68,7 @@ class TwitchApi {
             if(this.listStreamers.length <= 0) {
                 console.log("Ajout des streamers à la base");
                 this.addStreamer("TakuDev");
+                //this.addStreamer("minamicchiii");
 
             }
             else {
@@ -72,7 +76,7 @@ class TwitchApi {
                 for(const streamer of this.listStreamers) {
                     console.log(`Actualisation des informations pour l'utilisateur ${streamer.name}`)
                 
-                    //this.UserOnLive(streamer);
+                    this.UserOnLive(streamer);
         
                 }
 
@@ -137,7 +141,6 @@ class TwitchApi {
         result = await this.api.get(`https://api.twitch.tv/helix/users?login=${username}`)
                         .then((response) => result = response.data.data[0]);
 
-        //console.log(result);
 
         return result;
     }
@@ -158,8 +161,6 @@ class TwitchApi {
 
     async UserOnLive(streamer)
     {
-        var myMikuClient = require('../client/MyMikuClient').instance;
-
         streamer.listLastedStream = await this.getStreams(streamer.id);
 
 
@@ -181,13 +182,12 @@ class TwitchApi {
             {
                 console.log("Lancement du live de l'utilisateur");
                 
-
-                myMikuClient.beginNotificationLive(this.onLiveEmbed);
+                this.twitchModule.beginNotificationLive(this.onLiveEmbed);
 
                 streamer.isStreaming = true;
             }
 
-            myMikuClient.updateNotificationLive(this.onLiveEmbed);
+            this.twitchModule.updateNotificationLive(this.onLiveEmbed);
         }
         else
         {
@@ -195,7 +195,8 @@ class TwitchApi {
             {
                 console.log("Live de l'utilisateur terminé");
                 
-                myMikuClient.endNotificationLive(this.onLiveEmbed);
+
+                this.twitchModule.endNotificationLive(this.onLiveEmbed);
 
                 streamer.isStreaming = false;
             }
