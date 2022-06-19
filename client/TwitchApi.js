@@ -74,7 +74,7 @@ class TwitchApi {
             else {
 
                 for(const streamer of this.listStreamers) {
-                    console.log(`Actualisation des informations pour l'utilisateur ${streamer.name}`)
+                    console.log(`Actualisation des informations pour l'utilisateur ${streamer.name}`);
                 
                     this.UserOnLive(streamer);
         
@@ -119,7 +119,8 @@ class TwitchApi {
 
         if(result != null)
         {
-            console.log(`Connected to twitch API: ${result.data.token_type}`);
+            console.log(`Connected to twitch API`);
+            //console.log(`Connected to twitch API: ${result.data.token_type}`);
             //console.log(`Connected to twitch API: ${result.data.token_type} ${result.data.access_token}`);
     
             this.api = axios.create({
@@ -161,6 +162,7 @@ class TwitchApi {
 
     async UserOnLive(streamer)
     {
+        console.log(`USERONLIVE des informations pour l'utilisateur ${streamer.name}`);
         streamer.listLastedStream = await this.getStreams(streamer.id);
 
 

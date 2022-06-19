@@ -53,6 +53,7 @@ class MyMikuClient {
     {
         for (const module of this.modules) {
         
+            console.log(module.name);
             if(module.name == name)
             {
                 return module;

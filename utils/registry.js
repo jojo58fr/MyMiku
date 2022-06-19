@@ -32,6 +32,7 @@ async function registerModuleHandler(dir = '') {
         const module = new Module();
         
         listModules.push(module);
+        console.log(file);
       
       }
     
@@ -122,5 +123,5 @@ async function registerEventsHandler(client, dir = '') {
 module.exports = {
   registerModuleHandler,
   registerCommandsHandler, 
-  registerEventsHandler,
+  registerEventsHandler
 };

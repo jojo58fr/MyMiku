@@ -19,6 +19,8 @@ module.exports = class TwitchModule extends BaseModule {
 		this.embedNotificationLive = null;
 
 		this.client = null;
+
+        this.guildID = null;
 	}
 
 	Update() {
@@ -31,6 +33,7 @@ module.exports = class TwitchModule extends BaseModule {
 
 		this.client = client;
 
+        this.setGuildId("847873984950173766");
 		this.CreateNotificationRole("847873984950173766", client);
 
     }
@@ -44,6 +47,11 @@ module.exports = class TwitchModule extends BaseModule {
         interaction.roles.add(role).catch(console.error);
 
 	}
+
+    async setGuildId(guildID) {
+        //console.log("GuildID:" + guildID)
+        this.guildID = guildID;
+    }
 
 	async CreateNotificationRole(guildID, client) {
 		if(this.activeNotificationRoles)
@@ -68,9 +76,17 @@ module.exports = class TwitchModule extends BaseModule {
 
         var embedMessage = null;
 
+        //DEV CHANNEL
+        //const channel = await this.client.channels.fetch("977864710517035048");
+        ///END DEV CHANNEL
+
         const channel = await this.client.channels.fetch("848186561081376778");
         
-        channel.send( { content: "Hey ! Mon live vient de débuter @everyone", embeds: [msgEmbed] }).then((msg) => { this.embedNotificationLive = msg; });
+        console.log(this.guildID);
+        let guild = await this.client.guilds.fetch(this.guildID);
+        let ViewersRole = guild.roles.cache.find( x => x.name === "Viewers (MyMiku)");
+
+        channel.send( { content: `Hey ! Mon live vient de débuter ${ViewersRole}` , embeds: [msgEmbed] }).then((msg) => { this.embedNotificationLive = msg; });
 
         //console.log( this.embedNotificationLive );
 
@@ -83,7 +99,10 @@ module.exports = class TwitchModule extends BaseModule {
 
             let msgEmbed = onLiveEmbed.createEmbed();
 
-            this.embedNotificationLive.edit({ content: "Hey ! Un live est en cours @everyone", embeds: [msgEmbed] });
+            let guild = await this.client.guilds.fetch(this.guildID);
+            let ViewersRole = guild.roles.cache.find( x => x.name === "Viewers (MyMiku)");
+
+            this.embedNotificationLive.edit({ content: `Hey ! Un live est en cours ${ViewersRole}` , embeds: [msgEmbed] });
         }
 
         console.log("User just updated his live");
@@ -98,7 +117,7 @@ module.exports = class TwitchModule extends BaseModule {
 
             let msgEmbed = onLiveEmbed.createEmbed(true);
 
-            this.embedNotificationLive.edit({ content: "Mon live est terminé. Merci à tous ! @everyone", embeds: [msgEmbed] });
+            this.embedNotificationLive.edit({ content: `Mon live est terminé. Merci à tous ! ${ViewersRole}`, embeds: [msgEmbed] });
         }
 
     }

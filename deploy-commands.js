@@ -10,6 +10,7 @@ async function registerCommandHandlerList(dir = '') {
 	console.log(`registerCommandHandlerList()`);
   
 	const currentPath = dir;
+	console.log(dir);
   
 	const commandFiles = await fs.readdir(currentPath);
 	
@@ -31,6 +32,7 @@ async function registerCommandHandlerList(dir = '') {
 		  const command = new Command();
 		  
 		  listCommand.push(command);
+		  console.log(file);
 		
 		}
 	  
