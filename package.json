@@ -3,13 +3,15 @@
     "@discordjs/builders": "^0.6.0",
     "@discordjs/rest": "^0.1.0-canary.0",
     "axios": "^0.22.0",
+    "bancho.js": "^0.9.7",
     "discord-api-types": "^0.23.1",
     "discord.js": "^13.2.0",
     "dotenv": "^10.0.0",
     "humanize-duration": "^3.27.0",
     "log4js": "^6.3.0",
     "moment": "^2.29.1",
-    "mongoose": "^6.0.10"
+    "mongoose": "^6.0.10",
+    "twit": "^2.2.11"
   },
   "name": "mymiku",
   "description": "A Discord bot that help streamers to create a community with usefuls commandsnpm",
