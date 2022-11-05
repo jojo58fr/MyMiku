@@ -2,6 +2,9 @@
 .env
 config.json
 config-twitch.json
+config-twitter.json
+config-irc-osu.json
+config-osu.json
 
 
 # Logs
