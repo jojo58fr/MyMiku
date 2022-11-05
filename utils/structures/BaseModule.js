@@ -4,6 +4,10 @@ module.exports = class BaseModule {
       this.name             = name;
       this.description      = description;
       this.active           = active;
+
+      this.Construct.bind(this);
+      this.Start.bind(this);
+      this.Update.bind(this);
     }
 
     Construct() {
@@ -20,7 +24,12 @@ module.exports = class BaseModule {
         console.log(`* ${this.description} *`);
         console.log(`***********************************`);
 
+        this.Start(this);
         setInterval(() => { this.Update(this) }, 250);
+
+    }
+
+    Start() {
 
     }
 

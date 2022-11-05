@@ -11,7 +11,8 @@
     "log4js": "^6.3.0",
     "moment": "^2.29.1",
     "mongoose": "^6.0.10",
-    "twit": "^2.2.11"
+    "twit": "^2.2.11",
+    "twitter-api-v2": "^1.12.2"
   },
   "name": "mymiku",
   "description": "A Discord bot that help streamers to create a community with usefuls commandsnpm",

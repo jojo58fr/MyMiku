@@ -1,9 +1,6 @@
 const axios = require('axios').default;
 const { clientID, secretID } = require('../config-twitch.json');
 
-const OnLiveEmbed = require('./embeds/OnLiveEmbed');
-const TwitchModule = require('../module/stream/TwitchModule');
-
 class Streamer {
     
     constructor() {
@@ -29,6 +26,9 @@ class Streamer {
         this.isStreaming            = false;
         this.listLastedStream       = []; //Info about the lasted stream
         
+        // Oncalled Event
+        this.OnStartedStream = function() { };
+        this.OnEndedStream = function () { };
     }
 
 }
@@ -51,31 +51,28 @@ class TwitchApi {
 
         this.listStreamers = [];
 
-
-        this.onLiveEmbed = new OnLiveEmbed();
-
-        var myMikuClient = require('../client/MyMikuClient').instance;
-        this.twitchModule = twitchModule;
+        this.addStreamer.bind(this);
+        this.getUserTwitchData.bind(this);
     }
 
     update(that) {
         
-        console.log("Je suis l'update de Twitch API");
+        console.log("[TwitchApi] Update()");
 
         if(that.getAuthentification())
         {
 
             if(this.listStreamers.length <= 0) {
-                console.log("Ajout des streamers à la base");
-                this.addStreamer("TakuDev");
+                console.log("[TwitchApi] Aucun stream à surveiller");
                 //this.addStreamer("minamicchiii");
 
             }
             else {
 
                 for(const streamer of this.listStreamers) {
-                    console.log(`Actualisation des informations pour l'utilisateur ${streamer.name}`);
+                    console.log(`[TwitchApi] Actualisation des informations pour l'utilisateur ${streamer.name}`);
                 
+                    this.refreshUserInfo(streamer);
                     this.UserOnLive(streamer);
         
                 }
@@ -86,12 +83,9 @@ class TwitchApi {
 
     }
 
-    async addStreamer(username)
-    {
-        let user = new Streamer();
+    async refreshUserInfo(user) {
 
-        let result = await this.getUserTwitchData(username);
-
+        let result = await this.getUserTwitchData(user.name);
         //Classical infos
         user.id                     = result.id;
         user.bio                    = result.description;
@@ -102,11 +96,35 @@ class TwitchApi {
         user.type                   = result.type;
         user.updated_at             = result.update_at;
 
+    }
+
+    async addStreamer(username, func)
+    {
+        let user = new Streamer();
+        user.name                   = username;
+        if(this._isConnected) {
+            let result = await refreshUserInfo(user);
+            //Classical infos
+            user.id                     = result.id;
+            user.bio                    = result.description;
+            user.created_at             = result.created_at;
+            user.display_name           = result.display_name;
+            user.logo                   = result.profile_image_url;
+            user.name                   = result.login;
+            user.type                   = result.type;
+            user.updated_at             = result.update_at;
+        }
+
+        console.log(`[TwitchApi] Added ${user.name} to be watched by twitchApi`);
+
         this.listStreamers.push(user);
+
+        func(user);
     }
 
     async getAuthentification()
     {
+        console.log("getAuthentification");
         if(this._isConnected) return true;
 
         let result = null;
@@ -117,12 +135,11 @@ class TwitchApi {
         this._connectedResponse = result;
         this._isConnected = true;
 
+        
         if(result != null)
         {
-            console.log(`Connected to twitch API`);
-            //console.log(`Connected to twitch API: ${result.data.token_type}`);
-            //console.log(`Connected to twitch API: ${result.data.token_type} ${result.data.access_token}`);
-    
+            console.log(`[TwitchApi] Connected to twitch API`);
+                
             this.api = axios.create({
                 headers: {
                     'Client-ID': clientID,
@@ -131,11 +148,14 @@ class TwitchApi {
             });
 
         }
+        else {
+            console.log(`[TwitchApi] ERROR TWITCH API`);
+        }
     }
 
     async getUserTwitchData(username)
     {
-        console.log(`Getting User info ${username}`);
+        console.log(`[TwitchApi] Getting User info ${username}`);
 
         let result = null;
 
@@ -148,7 +168,7 @@ class TwitchApi {
 
     async getStreams(idStreamer)
     {
-        console.log(`Getting User streams ${idStreamer}`);
+        console.log(`[TwitchApi] Getting User streams ${idStreamer}`);
 
         let result = null;
 
@@ -162,49 +182,40 @@ class TwitchApi {
 
     async UserOnLive(streamer)
     {
-        console.log(`USERONLIVE des informations pour l'utilisateur ${streamer.name}`);
+        console.log(`[TwitchApi] USERONLIVE des informations pour l'utilisateur ${streamer.name}`);
         streamer.listLastedStream = await this.getStreams(streamer.id);
-
-
-        let lastedStream = streamer.listLastedStream[0];
 
         if(streamer.listLastedStream.length > 0)
         {
 
-            this.onLiveEmbed.logo               = streamer.logo;
-            this.onLiveEmbed.user_login         = streamer.name;
-            this.onLiveEmbed.user_name          = streamer.display_name;
-            this.onLiveEmbed.title              = lastedStream.title;
-            this.onLiveEmbed.started_at         = lastedStream.started_at;
-            this.onLiveEmbed.viewer_count       = lastedStream.viewer_count;
-            this.onLiveEmbed.game_name          = lastedStream.game_name;
-            this.onLiveEmbed.thumbnail_url      = lastedStream.thumbnail_url;
-
             if(!streamer.isStreaming)
             {
-                console.log("Lancement du live de l'utilisateur");
+                console.log("[TwitchApi] Lancement du live de l'utilisateur");
                 
-                this.twitchModule.beginNotificationLive(this.onLiveEmbed);
+                //this.twitchModule.beginNotificationLive(this.onLiveEmbed);
 
                 streamer.isStreaming = true;
+
+                streamer.OnStartedStream();
             }
 
-            this.twitchModule.updateNotificationLive(this.onLiveEmbed);
+            //this.twitchModule.updateNotificationLive(this.onLiveEmbed);
         }
         else
         {
             if(streamer.isStreaming)
             {
-                console.log("Live de l'utilisateur terminé");
+                console.log("[TwitchApi] Live de l'utilisateur terminé");
                 
 
-                this.twitchModule.endNotificationLive(this.onLiveEmbed);
+                //this.twitchModule.endNotificationLive(this.onLiveEmbed);
 
                 streamer.isStreaming = false;
+                streamer.OnEndedStream();
             }
             else
             {
-                console.log("Aucun live lancée");
+                console.log("[TwitchApi] Aucun live lancée");
             }
         }
     }
