@@ -42,7 +42,7 @@ module.exports = class TwitchModule extends BaseModule {
 
             }
     
-            streamer.OnUpdatedInfos = function() {
+            streamer.OnUpdatedStream = function() {
 
                 let lastedStream = streamer.listLastedStream[0];
                 that.onLiveEmbed.logo               = streamer.logo;
@@ -138,11 +138,11 @@ module.exports = class TwitchModule extends BaseModule {
         var embedMessage = null;
 
         ///DEV CHANNEL
-        const channel = await this.client.channels.fetch("977864710517035048");
+        //const channel = await this.client.channels.fetch("977864710517035048");
         ///END DEV CHANNEL
 
         ///PROD CHANNEL
-        //const channel = await this.client.channels.fetch("848186561081376778");
+        const channel = await this.client.channels.fetch("848186561081376778");
         ///END PROD CHANNEL
 
         console.log(this.guildID);

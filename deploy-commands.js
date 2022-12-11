@@ -60,6 +60,11 @@ async function main() {
 		.then(() => console.log('Successfully registered application commands.'))
 		.catch(console.error);
 
+	//TMP - For Server Event
+	rest.put(Routes.applicationGuildCommands(clientId, "915024049799839804"), { body: commands })
+		.then(() => console.log('Successfully registered application commands.'))
+		.catch(console.error);
+
 	//Global commands - Production Only
 	/*await rest.put(
 		Routes.applicationCommands(clientId),

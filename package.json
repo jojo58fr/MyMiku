@@ -9,6 +9,7 @@
     "dotenv": "^10.0.0",
     "humanize-duration": "^3.27.0",
     "log4js": "^6.3.0",
+    "minecraft-server-util": "^5.3.1",
     "moment": "^2.29.1",
     "mongoose": "^6.0.10",
     "twit": "^2.2.11",

@@ -29,6 +29,7 @@ class Streamer {
         // Oncalled Event
         this.OnStartedStream = function() { };
         this.OnEndedStream = function () { };
+        this.OnUpdatedStream = function() { };
     }
 
 }
@@ -200,6 +201,7 @@ class TwitchApi {
             }
 
             //this.twitchModule.updateNotificationLive(this.onLiveEmbed);
+            streamer.OnUpdatedStream();
         }
         else
         {
